@@ -66,7 +66,7 @@ public class SimpleTaskStore implements TaskStore {
     }
 
     @Override
-    public List<Task> findAll(Task task) {
+    public List<Task> findAll() {
         try (Session session = sf.openSession()) {
             List<Task> queryList = session.createQuery("from Task", Task.class).list();
             return queryList;

@@ -12,7 +12,7 @@ public interface TaskStore {
 
     Optional<Task> add(Task task);
 
-    List<Task> findAll(Task task);
+    List<Task> findAll();
 
     Optional<Task> findById(int id);
 
