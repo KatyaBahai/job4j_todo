@@ -1,0 +1,47 @@
+<!doctype html>
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://thymeleaf.org">
+<head>
+    <title>Tasks</title>
+    <div th:insert="~{fragments/header :: header}"></div>
+</head>
+<body>
+<div class="container-fluid p-0">
+    <header th:insert="fragments/header :: navbar"></header>
+    <div class="col-6">
+        <a class="btn btn-primary w-100" th:href="@{/tasks/add}">
+            <i class="bi bi-plus-circle"></i> Add a new task
+        </a>
+    </div>
+    <div class="container">
+        <div class="row">
+            <table class="table">
+                <thead>
+                <tr>
+                    <th scope="col">Title</th>
+                    <th scope="col">Description</th>
+                    <th scope="col">Date</th>
+                    <th scope="col">Completed</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr th:each="task: ${tasks}">
+                    <td th:text="${task.title}"></td>
+                    <td>
+                        <a th:text="${#strings.length(task.description) > 15 ? #strings.substring(task.description, 0, 15) + '...' : task.description}"
+                           th:href="@{/tasks/{taskId}(taskId=${task.id})}"></a>
+                    </td>
+                    <td th:text="${#temporals.format(task.created, 'dd-MM-yyyy HH:mm')}"></td>
+                    <td>
+                        <i class="bi bi-check-circle text-success" th:if="${task.done}"></i>
+                        <i class="bi bi-x-circle text-danger" th:if="${!task.done}"></i>
+                    </td>
+
+                </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+    <footer th:insert="fragments/footer :: footer"></footer>
+</div>
+</body>
+</html>

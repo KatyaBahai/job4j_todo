@@ -19,6 +19,11 @@ import java.util.stream.Collectors;
 public class TaskController {
     TaskService taskService;
 
+    @GetMapping("/add")
+    public String getCreationPage() {
+        return "tasks/create";
+    }
+
     @PostMapping("/add")
     public String addNewTask(Model model, @ModelAttribute Task task) {
         var savedTask = taskService.add(task);
@@ -33,7 +38,7 @@ public class TaskController {
     public String getAllTasks(@PathVariable String filter, Model model) {
         List<Task> allTasks = taskService.findAll();
         List<Task> filteredTasks = switch (filter) {
-            case "uncompleted" -> allTasks.stream()
+            case "pending" -> allTasks.stream()
                     .filter(task -> !task.getDone())
                     .collect(Collectors.toList());
             case "completed" -> allTasks.stream()
@@ -48,12 +53,12 @@ public class TaskController {
 
     @GetMapping("/{id}")
     public String getTaskById(@PathVariable int id, Model model) {
-            Optional<Task> taskOptional = taskService.findById(id);
-            if (taskOptional.isEmpty()) {
-                model.addAttribute("message", "There's no such task, sorry!");
-                return "errors/404";
-            }
-            model.addAttribute("task", taskOptional.get());
+        Optional<Task> taskOptional = taskService.findById(id);
+        if (taskOptional.isEmpty()) {
+            model.addAttribute("message", "There's no such task, sorry!");
+            return "errors/404";
+        }
+        model.addAttribute("task", taskOptional.get());
         return "tasks/description";
     }
 
@@ -66,6 +71,17 @@ public class TaskController {
         }
         model.addAttribute("task", taskOptional.get());
         return "tasks/edit";
+    }
+
+    @PostMapping("/done")
+    public String changeDone(@ModelAttribute Task task, Model model) {
+        task.setDone(!task.getDone());
+        Optional<Task> editedTask = taskService.edit(task);
+        if (editedTask.isEmpty()) {
+            model.addAttribute("message", "There's no task to edit with this identifier.");
+            return "/errors/404";
+        }
+        return "redirect:/tasks";
     }
 
     @PostMapping("/edit")
