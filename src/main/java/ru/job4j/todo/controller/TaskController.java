@@ -31,13 +31,14 @@ public class TaskController {
             model.addAttribute("message", "There's been some problem. Please try again.");
             return "errors/404";
         }
-        return "redirect:/tasks";
+        return "redirect:/index";
     }
 
-    @GetMapping("/{filter}")
+    @GetMapping("/list/{filter}")
     public String getAllTasks(@PathVariable String filter, Model model) {
         List<Task> allTasks = taskService.findAll();
         List<Task> filteredTasks = switch (filter) {
+            case "all" -> allTasks;
             case "pending" -> allTasks.stream()
                     .filter(task -> !task.getDone())
                     .collect(Collectors.toList());
@@ -74,14 +75,20 @@ public class TaskController {
     }
 
     @PostMapping("/done")
-    public String changeDone(@ModelAttribute Task task, Model model) {
-        task.setDone(!task.getDone());
-        Optional<Task> editedTask = taskService.edit(task);
-        if (editedTask.isEmpty()) {
+    public String changeDone(@RequestParam int id, Model model) {
+        Optional<Task> existingTask = taskService.findById(id);
+        if (existingTask.isEmpty()) {
             model.addAttribute("message", "There's no task to edit with this identifier.");
             return "/errors/404";
         }
-        return "redirect:/tasks";
+        Task updatedTask = existingTask.get();
+        updatedTask.setDone(!updatedTask.getDone());
+        Optional<Task> savedTask = taskService.edit(updatedTask);
+        if (savedTask.isEmpty()) {
+            model.addAttribute("message", "Failed to update the task.");
+            return "/errors/404";
+        }
+        return "redirect:/index";
     }
 
     @PostMapping("/edit")
@@ -92,16 +99,16 @@ public class TaskController {
             return "/errors/404";
         }
         model.addAttribute("id", task.getId());
-        return "redirect:/{id}";
+        return "redirect:/tasks/" + task.getId();
     }
 
-    @PostMapping("/delete")
-    public String delete(@ModelAttribute Task task, Model model) {
-        var isDeleted = taskService.deleteById(task.getId());
+    @GetMapping("/delete/{id}")
+    public String delete(@PathVariable int id, Model model) {
+        var isDeleted = taskService.deleteById(id);
         if (!isDeleted) {
             model.addAttribute("message", "The task with this identifier is not found");
             return "/errors/404";
         }
-        return "redirect:/tasks";
+        return "redirect:/index";
     }
 }

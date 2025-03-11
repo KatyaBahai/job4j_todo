@@ -22,9 +22,10 @@ public class SimpleTaskStore implements TaskStore {
         boolean deleted = false;
         try (Session session = sf.openSession()) {
             session.beginTransaction();
-            Query<Task> query = session.createQuery("DELETE FROM Task WHERE id = :id", Task.class)
-                    .setParameter("id", id);
-            if (query.executeUpdate() > 0) {
+           int affectedRows =  session.createQuery("DELETE FROM Task WHERE id = :id")
+                    .setParameter("id", id)
+                   .executeUpdate();
+            if (affectedRows > 0) {
                 deleted = true;
             }
             session.getTransaction().commit();
