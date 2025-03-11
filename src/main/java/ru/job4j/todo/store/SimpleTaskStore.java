@@ -4,6 +4,7 @@ import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
+import org.hibernate.Transaction;
 import org.hibernate.query.Query;
 import org.springframework.stereotype.Repository;
 import ru.job4j.todo.model.Task;
@@ -20,17 +21,27 @@ public class SimpleTaskStore implements TaskStore {
     @Override
     public boolean deleteById(int id) {
         boolean deleted = false;
-        try (Session session = sf.openSession()) {
-            session.beginTransaction();
+        Session session = null;
+        Transaction tx = null;
+        try {
+            session = sf.openSession();
+            tx = session.beginTransaction();
            int affectedRows =  session.createQuery("DELETE FROM Task WHERE id = :id")
                     .setParameter("id", id)
                    .executeUpdate();
             if (affectedRows > 0) {
                 deleted = true;
             }
-            session.getTransaction().commit();
+            tx.commit();
         } catch (Exception e) {
-            e.printStackTrace();
+            log.error(e.getMessage(), e);
+            if (tx != null) {
+                tx.rollback();
+            }
+        } finally {
+            if (session != null) {
+                session.close();
+            }
         }
         return deleted;
     }
@@ -53,15 +64,25 @@ public class SimpleTaskStore implements TaskStore {
 
     @Override
     public Optional<Task> add(Task task) {
-        try (Session session = sf.openSession()) {
-            session.beginTransaction();
+        Session session = null;
+        Transaction tx = null;
+        try {
+            session = sf.openSession();
+            tx = session.beginTransaction();
             session.save(task);
-            session.getTransaction().commit();
+            tx.commit();
             if (task.getId() != null) {
                 return Optional.of(task);
             }
         } catch (Exception e) {
             log.error(e.getMessage(), e);
+            if (tx != null) {
+                tx.rollback();
+            }
+        } finally {
+            if (session != null) {
+                session.close();
+            }
         }
         return Optional.empty();
     }
@@ -89,9 +110,10 @@ public class SimpleTaskStore implements TaskStore {
     @Override
     public Optional<Task> edit(Task task) {
         Session session = null;
+        Transaction tx = null;
         try {
             session = sf.openSession();
-            session.beginTransaction();
+            tx = session.beginTransaction();
             Task existingTask = session.get(Task.class, task.getId());
             if (existingTask == null) {
                return Optional.empty();
@@ -101,12 +123,17 @@ public class SimpleTaskStore implements TaskStore {
             existingTask.setDescription(task.getDescription());
             existingTask.setDone(task.getDone());
             session.update(existingTask);
-            session.getTransaction().commit();
-            session.close();
+            tx.commit();
     } catch (Exception e) {
-        session.getTransaction().rollback();
-        e.printStackTrace();
-    }
+            log.error(e.getMessage(), e);
+            if (tx != null) {
+                tx.rollback();
+            }
+        } finally {
+            if (session != null) {
+                session.close();
+            }
+        }
         return Optional.of(task);
     }
 }

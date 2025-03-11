@@ -21,15 +21,25 @@ public class SimpleUserStore implements UserStore {
 
     @Override
     public Optional<User> save(User user) {
-        try (Session session = sf.openSession()) {
-           session.beginTransaction();
+        Session session = null;
+        Transaction tx = null;
+        try {
+            session = sf.openSession();
+            tx = session.beginTransaction();
             session.save(user);
-            session.getTransaction().commit();
+            tx.commit();
             if (user.getId() != null) {
                 return Optional.of(user);
             }
         } catch (Exception e) {
             log.error(e.getMessage(), e);
+            if (tx != null) {
+                tx.rollback();
+            }
+        } finally {
+            if (session != null) {
+                session.close();
+            }
         }
         return Optional.empty();
     }
@@ -49,18 +59,24 @@ public class SimpleUserStore implements UserStore {
 
     public boolean deleteById(int id) {
         boolean deleted = false;
-        Transaction transaction = null;
-        try (Session session = sf.openSession()) {
-            transaction = session.beginTransaction();
+        Session session = null;
+        Transaction tx = null;
+        try {
+            session = sf.openSession();
+            tx = session.beginTransaction();
             session.createQuery("DELETE User WHERE id = :id")
                     .setParameter("id", id)
                     .executeUpdate();
-            session.getTransaction().commit();
+            tx.commit();
             deleted = true;
         } catch (Exception e) {
-            e.printStackTrace();
-            if (transaction != null) {
-                transaction.rollback();
+            log.error(e.getMessage(), e);
+            if (tx != null) {
+                tx.rollback();
+            }
+        } finally {
+            if (session != null) {
+                session.close();
             }
         }
         return deleted;

@@ -24,29 +24,39 @@
 </head>
 <body>
 <div th:fragment="navbar">
-    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+    <nav class="navbar navbar-expand-lg navbar-light bg-light">
         <div class="container">
             <a class="navbar-brand" href="/">ToDoList</a>
-            <div class="collapse navbar-collapse">
+
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
+                    aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <!-- Left-aligned navigation links -->
                 <div class="navbar-nav me-auto">
                     <a class="nav-item nav-link" href="/">Main</a>
                     <a class="nav-item nav-link active" th:href="@{/tasks/list/all}">All tasks</a>
                     <a class="nav-item nav-link active" th:href="@{/tasks/list/pending}">Pending</a>
                     <a class="nav-item nav-link active" th:href="@{/tasks/list/completed}">Completed</a>
                 </div>
-                <div class="d-flex ms-auto">
-                <div class="d-flex" th:if="${wowUser.name == 'Гость' || wowUser.name == null}">
-                    <a class="nav-link text-secondary me-3" th:href="@{/users/register}">Sign up</a>
-                    <a class="nav-link text-secondary" th:href="@{/users/login}">Sign in</a>
-                </div>
-                <div class="d-flex" th:if="${wowUser.name != 'Гость' && wowUser.name != null}">
-                    <a class="nav-link text-secondary me-3" href="#" th:text="${wowUser.name}"></a>
-                    <a class="nav-link text-secondary" th:href="@{/users/logout}">Sign out</a>
-                </div>
+
+                <!-- Right-aligned authentication links -->
+                <div class="navbar-nav">
+                    <div class="d-flex" th:if="${wowUser.name == 'Гость' || wowUser.name == null}">
+                        <a class="nav-link text-secondary me-3" th:href="@{/users/register}">Sign up</a>
+                        <a class="nav-link text-secondary" th:href="@{/users/login}">Sign in</a>
+                    </div>
+                    <div class="d-flex" th:if="${wowUser.name != 'Гость' && wowUser.name != null}">
+                        <a class="nav-link text-secondary me-3" href="#" th:text="${wowUser.name}"></a>
+                        <a class="nav-link text-secondary" th:href="@{/users/logout}">Sign out</a>
+                    </div>
                 </div>
             </div>
         </div>
     </nav>
+
 </div>
 </body>
 </html>
