@@ -3,7 +3,6 @@ package ru.job4j.todo.model;
 import lombok.Data;
 
 import javax.persistence.*;
-
 @Entity
 @Table(name = "users")
 @Data
