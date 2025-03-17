@@ -1,10 +1,12 @@
-package ru.job4j.todo.service;
+package ru.job4j.todo.store.user;
 
 import ru.job4j.todo.model.User;
 import java.util.Optional;
 
-public interface UserService {
-    Optional<User> save(User user);
+public interface UserStore {
 
     Optional<User> findByEmailAndPassword(String email, String password);
+
+    Optional<User> save(User user);
+
 }

@@ -1,4 +1,4 @@
-package ru.job4j.todo.service;
+package ru.job4j.todo.service.task;
 
 import org.hibernate.Session;
 import org.hibernate.query.Query;
@@ -17,4 +17,10 @@ public interface TaskService {
      Optional<Task> findById(int id);
 
      Optional<Task> edit(Task task);
+
+     boolean editDone(int id);
+
+     List<Task> findPendingTasks();
+
+     List<Task> findCompletedTasks();
 }

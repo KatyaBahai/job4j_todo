@@ -1,4 +1,4 @@
-package ru.job4j.todo.store;
+package ru.job4j.todo.store.task;
 
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -72,9 +72,7 @@ public class SimpleTaskStore implements TaskStore {
             tx = session.beginTransaction();
             session.save(task);
             tx.commit();
-            if (task.getId() != null) {
-                return Optional.of(task);
-            }
+            return Optional.of(task);
         } catch (Exception e) {
             log.error(e.getMessage(), e);
             if (tx != null) {
@@ -92,6 +90,22 @@ public class SimpleTaskStore implements TaskStore {
     public List<Task> findAll() {
         try (Session session = sf.openSession()) {
             List<Task> queryList = session.createQuery("from Task", Task.class).list();
+            return queryList;
+        }
+    }
+
+    @Override
+    public List<Task> findPendingTasks() {
+        try (Session session = sf.openSession()) {
+            List<Task> queryList = session.createQuery("from Task WHERE done = false", Task.class).list();
+            return queryList;
+        }
+    }
+
+    @Override
+    public List<Task> findCompletedTasks() {
+        try (Session session = sf.openSession()) {
+            List<Task> queryList = session.createQuery("from Task WHERE done = true", Task.class).list();
             return queryList;
         }
     }
@@ -115,15 +129,16 @@ public class SimpleTaskStore implements TaskStore {
         try {
             session = sf.openSession();
             tx = session.beginTransaction();
-            Task existingTask = session.get(Task.class, task.getId());
-            if (existingTask == null) {
+            Query taskQuery = session
+                    .createQuery("UPDATE Task t SET t.title = :title, t.description = :description"
+                            + " WHERE t.id = :id")
+                    .setParameter("title", task.getTitle())
+                    .setParameter("description", task.getDescription())
+                    .setParameter("id", task.getId());
+            int updatedRows = taskQuery.executeUpdate();
+            if (updatedRows <= 0) {
                return Optional.empty();
             }
-            existingTask.setTitle(task.getTitle());
-            existingTask.setCreated(task.getCreated());
-            existingTask.setDescription(task.getDescription());
-            existingTask.setDone(task.getDone());
-            session.update(existingTask);
             tx.commit();
     } catch (Exception e) {
             log.error(e.getMessage(), e);
@@ -136,5 +151,31 @@ public class SimpleTaskStore implements TaskStore {
             }
         }
         return Optional.of(task);
+    }
+
+    @Override
+    public boolean editDone(int id) {
+        Session session = null;
+        Transaction tx = null;
+        try {
+            session = sf.openSession();
+            tx = session.beginTransaction();
+            Query taskQuery =  session.createNativeQuery(
+                            "UPDATE tasks SET done = NOT done WHERE id = :id")
+                    .setParameter("id", id);
+            int updatedRows = taskQuery.executeUpdate();
+            tx.commit();
+            return updatedRows > 0;
+        } catch (Exception e) {
+            log.error(e.getMessage(), e);
+            if (tx != null) {
+                tx.rollback();
+            }
+        } finally {
+            if (session != null) {
+                session.close();
+            }
+        }
+        return false;
     }
 }

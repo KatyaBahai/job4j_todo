@@ -6,11 +6,9 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import ru.job4j.todo.model.Task;
-import ru.job4j.todo.service.TaskService;
+import ru.job4j.todo.service.task.TaskService;
 
-import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 @Controller
 @AllArgsConstructor
@@ -32,24 +30,6 @@ public class TaskController {
             return "errors/404";
         }
         return "redirect:/index";
-    }
-
-    @GetMapping("/list/{filter}")
-    public String getAllTasks(@PathVariable String filter, Model model) {
-        List<Task> allTasks = taskService.findAll();
-        List<Task> filteredTasks = switch (filter) {
-            case "all" -> allTasks;
-            case "pending" -> allTasks.stream()
-                    .filter(task -> !task.getDone())
-                    .collect(Collectors.toList());
-            case "completed" -> allTasks.stream()
-                    .filter(Task::getDone)
-                    .collect(Collectors.toList());
-            default -> allTasks;
-        };
-
-        model.addAttribute("tasks", filteredTasks);
-        return "tasks/list";
     }
 
     @GetMapping("/{id}")
@@ -76,15 +56,8 @@ public class TaskController {
 
     @PostMapping("/done")
     public String changeDone(@RequestParam int id, Model model) {
-        Optional<Task> existingTask = taskService.findById(id);
-        if (existingTask.isEmpty()) {
-            model.addAttribute("message", "There's no task to edit with this identifier.");
-            return "/errors/404";
-        }
-        Task updatedTask = existingTask.get();
-        updatedTask.setDone(!updatedTask.getDone());
-        Optional<Task> savedTask = taskService.edit(updatedTask);
-        if (savedTask.isEmpty()) {
+        boolean isUpdated = taskService.editDone(id);
+        if (!isUpdated) {
             model.addAttribute("message", "Failed to update the task.");
             return "/errors/404";
         }
@@ -110,5 +83,23 @@ public class TaskController {
             return "/errors/404";
         }
         return "redirect:/index";
+    }
+
+    @GetMapping("/list/all")
+    public String getAllTasks(Model model) {
+         model.addAttribute("tasks", taskService.findAll());
+        return "tasks/list";
+    }
+
+    @GetMapping("/list/pending")
+    public String getPendingTasks(Model model) {
+        model.addAttribute("tasks", taskService.findPendingTasks());
+        return "tasks/list";
+    }
+
+    @GetMapping("/list/completed")
+    public String getCompletedTasks(Model model) {
+        model.addAttribute("tasks", taskService.findCompletedTasks());
+        return "tasks/list";
     }
 }

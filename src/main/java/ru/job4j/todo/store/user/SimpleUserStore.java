@@ -1,4 +1,4 @@
-package ru.job4j.todo.store;
+package ru.job4j.todo.store.user;
 
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;

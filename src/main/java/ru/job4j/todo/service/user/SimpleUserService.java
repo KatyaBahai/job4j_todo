@@ -1,9 +1,9 @@
-package ru.job4j.todo.service;
+package ru.job4j.todo.service.user;
 
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 import ru.job4j.todo.model.User;
-import ru.job4j.todo.store.SimpleUserStore;
+import ru.job4j.todo.store.user.SimpleUserStore;
 
 import java.util.Optional;
 

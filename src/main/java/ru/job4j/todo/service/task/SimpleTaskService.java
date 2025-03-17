@@ -1,9 +1,9 @@
-package ru.job4j.todo.service;
+package ru.job4j.todo.service.task;
 
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 import ru.job4j.todo.model.Task;
-import ru.job4j.todo.store.SimpleTaskStore;
+import ru.job4j.todo.store.task.SimpleTaskStore;
 
 import java.util.List;
 import java.util.Optional;
@@ -35,5 +35,20 @@ public class SimpleTaskService implements TaskService {
     @Override
     public Optional<Task> edit(Task task) {
         return taskStore.edit(task);
+    }
+
+    @Override
+    public boolean editDone(int id) {
+        return taskStore.editDone(id);
+    }
+
+    @Override
+    public List<Task> findPendingTasks() {
+        return taskStore.findPendingTasks();
+    }
+
+    @Override
+    public List<Task> findCompletedTasks() {
+        return taskStore.findCompletedTasks();
     }
 }
