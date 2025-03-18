@@ -28,9 +28,7 @@ public class SimpleUserStore implements UserStore {
             tx = session.beginTransaction();
             session.save(user);
             tx.commit();
-            if (user.getId() != null) {
-                return Optional.of(user);
-            }
+            return Optional.of(user);
         } catch (Exception e) {
             log.error(e.getMessage(), e);
             if (tx != null) {

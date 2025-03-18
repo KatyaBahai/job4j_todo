@@ -26,8 +26,8 @@ public class UserController {
     public String register(Model model, @ModelAttribute User wowUser) {
         var savedUser = userService.save(wowUser);
         if (savedUser.isEmpty()) {
-            model.addAttribute("message", "This email already exists in the system.");
-            return "errors/404";
+            model.addAttribute("error", "This email already exists in the system.");
+            return "users/register";
         }
         return "redirect:/index";
     }
