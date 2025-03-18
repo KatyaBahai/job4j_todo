@@ -19,6 +19,14 @@ public class Task {
     private Integer id;
     private String description;
     private String title;
-    private Boolean done = false;
+    private boolean done;
     private LocalDateTime created = LocalDateTime.now();
+
+    public boolean isDone() {
+        return done;
+    }
+
+    public void setDone(boolean done) {
+        this.done = done;
+    }
 }

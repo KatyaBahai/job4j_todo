@@ -30,9 +30,7 @@ public class SimpleTaskStore implements TaskStore {
            int affectedRows =  session.createQuery("DELETE FROM Task WHERE id = :id")
                     .setParameter("id", id)
                    .executeUpdate();
-            if (affectedRows > 0) {
-                deleted = true;
-            }
+                deleted = affectedRows > 0;
             tx.commit();
         } catch (Exception e) {
             log.error(e.getMessage(), e);
