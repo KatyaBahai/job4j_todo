@@ -22,7 +22,7 @@ public class Task {
     private boolean done;
     private LocalDateTime created = LocalDateTime.now();
 
-    public boolean isDone() {
+    public boolean getDone() {
         return done;
     }
 
