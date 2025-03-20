@@ -20,6 +20,7 @@
                     <th scope="col">Title</th>
                     <th scope="col">Description</th>
                     <th scope="col">Date</th>
+                    <th scope="col">User</th>
                     <th scope="col">Completed</th>
                 </tr>
                 </thead>
@@ -31,6 +32,7 @@
                            th:href="@{/tasks/{taskId}(taskId=${task.id})}"></a>
                     </td>
                     <td th:text="${#temporals.format(task.created, 'dd-MM-yyyy HH:mm')}"></td>
+                    <td th:text="${task.user.name}"></td>
                     <td>
                         <i class="bi bi-check-circle text-success" th:if="${task.done}"></i>
                         <i class="bi bi-x-circle text-danger" th:if="${!task.done}"></i>

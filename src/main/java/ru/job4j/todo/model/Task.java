@@ -21,6 +21,9 @@ public class Task {
     private String title;
     private boolean done;
     private LocalDateTime created = LocalDateTime.now();
+    @ManyToOne
+    @JoinColumn(name = "user_id")
+    private User user;
 
     public boolean getDone() {
         return done;

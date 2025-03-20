@@ -6,6 +6,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import ru.job4j.todo.model.Task;
+import ru.job4j.todo.model.User;
 import ru.job4j.todo.service.task.TaskService;
 
 import java.util.Optional;
@@ -23,7 +24,8 @@ public class TaskController {
     }
 
     @PostMapping("/add")
-    public String addNewTask(Model model, @ModelAttribute Task task) {
+    public String addNewTask(@SessionAttribute User wowUser, Model model, @ModelAttribute Task task) {
+        task.setUser(wowUser);
         var savedTask = taskService.add(task);
         if (savedTask.isEmpty()) {
             model.addAttribute("message", "There's been some problem. Please try again.");
