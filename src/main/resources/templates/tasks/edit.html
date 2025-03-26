@@ -18,6 +18,12 @@
                 <input type="text" class="form-control" id="title" name="title" th:field="*{title}" placeholder="Title">
             </div>
             <div class="mb-3">
+                <label for="prior"><b>Priority</b></label>
+                <select class="form-control" id="prior" name="priority"  th:field="*{priority.id}">
+                    <option th:each="prior : ${priorities}" th:value="${prior.id}" th:text="${prior.name}"></option>
+                </select>
+            </div>
+            <div class="mb-3">
                 <label for="description" class="form-label"><b>Description</b></label>
                 <textarea class="form-control" id="description" name="description" th:field="*{description}" rows="25" placeholder="Description"></textarea>
             </div>

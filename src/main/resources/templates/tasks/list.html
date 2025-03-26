@@ -21,6 +21,7 @@
                     <th scope="col">Description</th>
                     <th scope="col">Date</th>
                     <th scope="col">User</th>
+                    <th scope="col">Priority</th>
                     <th scope="col">Completed</th>
                 </tr>
                 </thead>
@@ -33,6 +34,7 @@
                     </td>
                     <td th:text="${#temporals.format(task.created, 'dd-MM-yyyy HH:mm')}"></td>
                     <td th:text="${task.user.name}"></td>
+                    <td th:text="${task.priority.name}"></td>
                     <td>
                         <i class="bi bi-check-circle text-success" th:if="${task.done}"></i>
                         <i class="bi bi-x-circle text-danger" th:if="${!task.done}"></i>

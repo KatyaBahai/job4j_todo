@@ -26,12 +26,12 @@ public class SimpleTaskStore implements TaskStore {
 
     @Override
     public List<Task> findPendingTasks() {
-        return cr.query("from Task WHERE done = false", Task.class);
+        return cr.query("from Task t JOIN FETCH t.priority WHERE t.done = false ", Task.class);
     }
 
     @Override
     public List<Task> findCompletedTasks() {
-        return cr.query("from Task WHERE done = true", Task.class);
+        return cr.query("from Task t JOIN FETCH t.priority  WHERE t.done = true", Task.class);
     }
 
     @Override
@@ -47,12 +47,12 @@ public class SimpleTaskStore implements TaskStore {
 
     @Override
     public List<Task> findAll() {
-        return cr.query("from Task", Task.class);
+        return cr.query("from Task t JOIN FETCH t.priority", Task.class);
     }
 
     @Override
     public Optional<Task> findById(int id) {
-        return cr.optional("from Task WHERE id = :id", Task.class, Map.of("id", id));
+        return cr.optional("from Task t JOIN FETCH t.priority  WHERE t.id = :id", Task.class, Map.of("id", id));
     }
 
     @Override

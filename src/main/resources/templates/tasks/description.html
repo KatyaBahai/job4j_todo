@@ -20,8 +20,12 @@
                 </div>
             </div>
             <div class="mb-3">
+                <label for="priority" class="form-label"><b>Priority</b></label>
+                <input type="text" class="form-control" id="priority" name="priority" th:field="*{priority.name}" readonly>
+            </div>
+            <div class="mb-3">
                 <label for="description" class="form-label"><b>Description</b></label>
-                <textarea class="form-control" id="description" name="description" th:field="*{description}" rows="25" placeholder="Description" readonly></textarea>
+                <textarea class="form-control" id="description" name="description" th:field="*{description}" rows="10" placeholder="Description" readonly></textarea>
             </div>
         </form>
             <div class="mb-3 row">
