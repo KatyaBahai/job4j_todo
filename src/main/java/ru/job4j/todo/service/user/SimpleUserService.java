@@ -10,7 +10,7 @@ import java.util.Optional;
 @Service
 @AllArgsConstructor
 public class SimpleUserService implements UserService {
-    SimpleUserStore userStore;
+    private final SimpleUserStore userStore;
 
     @Override
     public Optional<User> save(User user) {

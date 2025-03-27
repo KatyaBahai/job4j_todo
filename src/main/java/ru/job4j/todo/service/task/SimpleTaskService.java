@@ -11,7 +11,7 @@ import java.util.Optional;
 @Service
 @AllArgsConstructor
 public class SimpleTaskService implements TaskService {
-    SimpleTaskStore taskStore;
+    private final SimpleTaskStore taskStore;
 
     public boolean deleteById(int id) {
         return taskStore.deleteById(id);

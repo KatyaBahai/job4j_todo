@@ -10,7 +10,7 @@ import java.util.Collection;
 @Repository
 @AllArgsConstructor
 public class SimplePriorityStore implements PriorityStore {
-    CrudRepository cr;
+    private final CrudRepository cr;
 
     @Override
     public Collection<Priority> findAll() {

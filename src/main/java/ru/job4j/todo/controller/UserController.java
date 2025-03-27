@@ -20,7 +20,7 @@ import javax.servlet.http.HttpSession;
 @ThreadSafe
 @RequestMapping("/users")
 public class UserController {
-    UserService userService;
+    private final UserService userService;
 
     @PostMapping("/register")
     public String register(Model model, @ModelAttribute User wowUser) {

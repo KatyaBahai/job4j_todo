@@ -17,8 +17,8 @@ import java.util.Optional;
 @ThreadSafe
 @RequestMapping("/tasks")
 public class TaskController {
-    TaskService taskService;
-    PriorityService priorityService;
+    private final TaskService taskService;
+    private final PriorityService priorityService;
 
     @GetMapping("/add")
     public String getCreationPage(Model model) {

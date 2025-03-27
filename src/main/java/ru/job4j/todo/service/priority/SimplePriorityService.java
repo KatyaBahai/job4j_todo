@@ -10,7 +10,7 @@ import java.util.Collection;
 @Service
 @AllArgsConstructor
 public class SimplePriorityService implements PriorityService {
-    PriorityStore priorityStore;
+    private final PriorityStore priorityStore;
 
     @Override
     public Collection<Priority> findAll() {
