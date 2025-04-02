@@ -26,12 +26,12 @@ public class SimpleTaskStore implements TaskStore {
 
     @Override
     public List<Task> findPendingTasks() {
-        return cr.query("from Task t JOIN FETCH t.priority WHERE t.done = false ", Task.class);
+        return cr.query("SELECT DISTINCT t from Task t JOIN FETCH t.priority join FETCH t.categories WHERE t.done = false ORDER BY t.id", Task.class);
     }
 
     @Override
     public List<Task> findCompletedTasks() {
-        return cr.query("from Task t JOIN FETCH t.priority  WHERE t.done = true", Task.class);
+        return cr.query("SELECT DISTINCT t from Task t JOIN FETCH t.priority join FETCH t.categories WHERE t.done = true  ORDER BY t.id", Task.class);
     }
 
     @Override
@@ -47,18 +47,19 @@ public class SimpleTaskStore implements TaskStore {
 
     @Override
     public List<Task> findAll() {
-        return cr.query("from Task t JOIN FETCH t.priority", Task.class);
+        return cr.query("SELECT DISTINCT t from Task t JOIN FETCH t.priority join FETCH t.categories ORDER BY t.id", Task.class);
     }
 
     @Override
     public Optional<Task> findById(int id) {
-        return cr.optional("from Task t JOIN FETCH t.priority  WHERE t.id = :id", Task.class, Map.of("id", id));
+        return cr.optional("from Task t JOIN FETCH t.priority join FETCH t.categories WHERE t.id = :id", Task.class, Map.of("id", id));
     }
 
     @Override
     public Optional<Task> edit(Task task) {
         try {
-            cr.run(session -> session.update(task));
+            cr.run(session -> session.merge(task));
+
             return Optional.of(task);
         } catch (Exception e) {
             log.error(e.getMessage(), e);

@@ -5,12 +5,15 @@ import net.jcip.annotations.ThreadSafe;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
+import ru.job4j.todo.model.Category;
+import ru.job4j.todo.model.Priority;
 import ru.job4j.todo.model.Task;
 import ru.job4j.todo.model.User;
+import ru.job4j.todo.service.category.CategoryService;
 import ru.job4j.todo.service.priority.PriorityService;
 import ru.job4j.todo.service.task.TaskService;
 
-import java.util.Optional;
+import java.util.*;
 
 @Controller
 @AllArgsConstructor
@@ -19,15 +22,22 @@ import java.util.Optional;
 public class TaskController {
     private final TaskService taskService;
     private final PriorityService priorityService;
+    private final CategoryService categoryService;
 
     @GetMapping("/add")
     public String getCreationPage(Model model) {
         model.addAttribute("priorities", priorityService.findAll());
+        model.addAttribute("categories", categoryService.findAll());
         return "tasks/create";
     }
 
     @PostMapping("/add")
-    public String addNewTask(@SessionAttribute User wowUser, Model model, @ModelAttribute Task task) {
+    public String addNewTask(@SessionAttribute User wowUser,
+                             @ModelAttribute Task task,
+                             @RequestParam List<Integer> categoryIds,
+                             Model model) {
+        List<Category> categoryList = new ArrayList<>(categoryService.findAllByIds(categoryIds));
+        task.setCategories(categoryList);
         task.setUser(wowUser);
         var savedTask = taskService.add(task);
         if (savedTask.isEmpty()) {
@@ -57,6 +67,7 @@ public class TaskController {
         }
         model.addAttribute("task", taskOptional.get());
         model.addAttribute("priorities", priorityService.findAll());
+        model.addAttribute("categories", categoryService.findAll());
         return "tasks/edit";
     }
 
@@ -71,14 +82,20 @@ public class TaskController {
     }
 
     @PostMapping("/edit")
-    public String edit(@ModelAttribute Task task, Model model) {
+    public String edit(@ModelAttribute Task task,
+                       @RequestParam List<Integer> categoryIds,
+                       Model model) {
+        List<Category> categoryList = new ArrayList<>(categoryService.findAllByIds(categoryIds));
+        task.setCategories(categoryList);
+        Optional<Priority> priorityOptional = priorityService.findById(task.getPriority().getId());
+        priorityOptional.ifPresent(task::setPriority);
         Optional<Task> editedTask = taskService.edit(task);
         if (editedTask.isEmpty()) {
             model.addAttribute("message", "There's no task to edit with this identifier.");
             return "/errors/404";
         }
-        model.addAttribute("id", task.getId());
-        return "redirect:/tasks/" + task.getId();
+        model.addAttribute("task", editedTask.get());
+        return "tasks/description";
     }
 
     @GetMapping("/delete/{id}")

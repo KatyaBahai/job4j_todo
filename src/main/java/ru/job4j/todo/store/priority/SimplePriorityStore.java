@@ -6,6 +6,8 @@ import ru.job4j.todo.model.Priority;
 import ru.job4j.todo.store.CrudRepository;
 
 import java.util.Collection;
+import java.util.Map;
+import java.util.Optional;
 
 @Repository
 @AllArgsConstructor
@@ -15,5 +17,10 @@ public class SimplePriorityStore implements PriorityStore {
     @Override
     public Collection<Priority> findAll() {
         return cr.query("from Priority p order by p.id", Priority.class);
+    }
+
+    @Override
+    public Optional<Priority> findById(int id) {
+        return cr.optional("from Priority c WHERE c.id = :fId", Priority.class, Map.of("fId", id));
     }
 }

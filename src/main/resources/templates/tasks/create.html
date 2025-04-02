@@ -23,6 +23,21 @@
                     <option th:each="prior : ${priorities}" th:value="${prior.id}" th:text="${prior.name}"></option>
                 </select>
             </div>
+
+            <div class="form-group">
+                <label><b>Categories</b></label>
+                <div class="form-control" style="background-color: #f8f9fa; padding: 10px; border-radius: 5px; min-height: 200px;">
+                    <ul style="list-style-type: none; padding: 0; margin: 0;">
+                        <li th:each="category : ${categories}">
+                            <label>
+                                <input type="checkbox" name="categoryIds" th:value="${category.id}"/>
+                                <span th:text="${category.name}"></span>
+                            </label>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+
             <div class="mb-3 row">
                 <div class="col-6"></div>
                 <div class="col-6">

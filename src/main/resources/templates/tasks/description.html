@@ -24,6 +24,13 @@
                 <input type="text" class="form-control" id="priority" name="priority" th:field="*{priority.name}" readonly>
             </div>
             <div class="mb-3">
+                <label><b>Categories</b></label>
+                <ul class="form-control" style="background-color: #f8f9fa; list-style-type: none; padding: 10px; border-radius: 5px; min-height: 150px;">
+                    <li th:each="ctg : ${task.categories}" th:text="${ctg.name}"></li>
+                </ul>
+            </div>
+
+            <div class="mb-3">
                 <label for="description" class="form-label"><b>Description</b></label>
                 <textarea class="form-control" id="description" name="description" th:field="*{description}" rows="10" placeholder="Description" readonly></textarea>
             </div>
