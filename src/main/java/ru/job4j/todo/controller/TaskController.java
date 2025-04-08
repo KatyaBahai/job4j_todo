@@ -13,6 +13,7 @@ import ru.job4j.todo.service.category.CategoryService;
 import ru.job4j.todo.service.priority.PriorityService;
 import ru.job4j.todo.service.task.TaskService;
 
+import java.time.ZoneId;
 import java.util.*;
 
 @Controller
@@ -39,7 +40,7 @@ public class TaskController {
         List<Category> categoryList = new ArrayList<>(categoryService.findAllByIds(categoryIds));
         task.setCategories(categoryList);
         task.setUser(wowUser);
-        var savedTask = taskService.add(task);
+        var savedTask = taskService.add(task, ZoneId.of(wowUser.getTimezone()));
         if (savedTask.isEmpty()) {
             model.addAttribute("message", "There's been some problem. Please try again.");
             return "errors/404";
@@ -109,20 +110,29 @@ public class TaskController {
     }
 
     @GetMapping("/list/all")
-    public String getAllTasks(Model model) {
-         model.addAttribute("tasks", taskService.findAll());
+    public String getAllTasks(Model model, @SessionAttribute User wowUser) {
+        ZoneId userZone = (wowUser.getTimezone() != null)
+                ? ZoneId.of(wowUser.getTimezone())
+                : ZoneId.systemDefault();
+        model.addAttribute("tasks", taskService.findAll(userZone));
         return "tasks/list";
     }
 
     @GetMapping("/list/pending")
-    public String getPendingTasks(Model model) {
-        model.addAttribute("tasks", taskService.findPendingTasks());
+    public String getPendingTasks(Model model, @SessionAttribute User wowUser) {
+        ZoneId userZone = (wowUser.getTimezone() != null)
+                ? ZoneId.of(wowUser.getTimezone())
+                : ZoneId.systemDefault();
+        model.addAttribute("tasks", taskService.findPendingTasks(userZone));
         return "tasks/list";
     }
 
     @GetMapping("/list/completed")
-    public String getCompletedTasks(Model model) {
-        model.addAttribute("tasks", taskService.findCompletedTasks());
+    public String getCompletedTasks(Model model, @SessionAttribute User wowUser) {
+        ZoneId userZone = (wowUser.getTimezone() != null)
+                ? ZoneId.of(wowUser.getTimezone())
+                : ZoneId.systemDefault();
+        model.addAttribute("tasks", taskService.findCompletedTasks(userZone));
         return "tasks/list";
     }
 }

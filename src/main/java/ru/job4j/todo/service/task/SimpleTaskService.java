@@ -2,29 +2,30 @@ package ru.job4j.todo.service.task;
 
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
+import ru.job4j.todo.ZoneConverter;
 import ru.job4j.todo.model.Task;
 import ru.job4j.todo.store.task.SimpleTaskStore;
 
-import java.util.List;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.util.Collection;
 import java.util.Optional;
 
 @Service
 @AllArgsConstructor
 public class SimpleTaskService implements TaskService {
     private final SimpleTaskStore taskStore;
+    private final ZoneConverter zoneConverter;
 
     public boolean deleteById(int id) {
         return taskStore.deleteById(id);
     }
 
     @Override
-    public Optional<Task> add(Task task) {
+    public Optional<Task> add(Task task, ZoneId userZone) {
+        LocalDateTime utcTime = zoneConverter.convertFromLocalTimeToUtc(userZone);
+        task.setCreated(utcTime);
         return taskStore.add(task);
-    }
-
-    @Override
-    public List<Task> findAll() {
-            return taskStore.findAll();
     }
 
     @Override
@@ -43,12 +44,17 @@ public class SimpleTaskService implements TaskService {
     }
 
     @Override
-    public List<Task> findPendingTasks() {
-        return taskStore.findPendingTasks();
+    public Collection<Task> findAll(ZoneId userZone) {
+        return zoneConverter.convertToUserTimeZone(userZone, taskStore.findAll());
     }
 
     @Override
-    public List<Task> findCompletedTasks() {
-        return taskStore.findCompletedTasks();
+    public Collection<Task> findPendingTasks(ZoneId userZone) {
+        return zoneConverter.convertToUserTimeZone(userZone, taskStore.findPendingTasks());
+    }
+
+    @Override
+    public Collection<Task> findCompletedTasks(ZoneId userZone) {
+        return zoneConverter.convertToUserTimeZone(userZone, taskStore.findCompletedTasks());
     }
 }

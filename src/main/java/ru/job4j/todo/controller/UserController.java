@@ -14,6 +14,8 @@ import ru.job4j.todo.service.user.UserService;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
+import java.time.ZoneId;
+import java.util.Set;
 
 @Controller
 @AllArgsConstructor
@@ -33,7 +35,10 @@ public class UserController {
     }
 
     @GetMapping("/register")
-    public String getRegistrationPage() {
+    public String getRegistrationPage(Model model) {
+
+        Set<String> zoneIds = ZoneId.getAvailableZoneIds();
+        model.addAttribute("timezones", zoneIds);
         return "users/register";
     }
 

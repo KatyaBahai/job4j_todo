@@ -6,6 +6,7 @@ import lombok.Setter;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
+import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -24,7 +25,9 @@ public class Task {
     private String description;
     private String title;
     private boolean done;
-    private LocalDateTime created = LocalDateTime.now();
+    private LocalDateTime created;
+    @Transient
+    private ZonedDateTime userCreationTime;
 
     @ManyToOne
     @JoinColumn(name = "user_id")
@@ -49,4 +52,5 @@ public class Task {
     public void setDone(boolean done) {
         this.done = done;
     }
+
 }

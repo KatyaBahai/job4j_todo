@@ -33,7 +33,7 @@
                         <a th:text="${#strings.length(task.description) > 15 ? #strings.substring(task.description, 0, 15) + '...' : task.description}"
                            th:href="@{/tasks/{taskId}(taskId=${task.id})}"></a>
                     </td>
-                    <td th:text="${#temporals.format(task.created, 'dd-MM-yyyy HH:mm')}"></td>
+                    <td th:text="${#temporals.format(task.userCreationTime, 'dd-MM-yyyy HH:mm')}"></td>
                     <td th:text="${task.user.name}"></td>
                     <td th:text="${task.priority.name}"></td>
                     <td>

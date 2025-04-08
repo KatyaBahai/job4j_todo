@@ -4,15 +4,17 @@ import org.hibernate.Session;
 import org.hibernate.query.Query;
 import ru.job4j.todo.model.Task;
 
+import java.time.ZoneId;
+import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
 
 public interface TaskService {
      boolean deleteById(int id);
 
-     Optional<Task> add(Task task);
+     Optional<Task> add(Task task, ZoneId userZone);
 
-     List<Task> findAll();
+     Collection<Task> findAll(ZoneId userZone);
 
      Optional<Task> findById(int id);
 
@@ -20,7 +22,7 @@ public interface TaskService {
 
      boolean editDone(int id);
 
-     List<Task> findPendingTasks();
+     Collection<Task> findPendingTasks(ZoneId userZone);
 
-     List<Task> findCompletedTasks();
+     Collection<Task> findCompletedTasks(ZoneId userZone);
 }
